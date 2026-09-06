@@ -25,7 +25,7 @@ export default function DeleteConfirm({ name, onConfirm, onCancel }: DeleteConfi
 
 	return (
 		<div
-			className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm p-4 pb-safe"
+			className="delete-confirm fixed inset-0 z-100 flex items-end justify-center bg-black/50 backdrop-blur-sm p-4 pb-safe"
 			role="dialog"
 			aria-modal="true"
 			aria-labelledby="delete-dialog-title"

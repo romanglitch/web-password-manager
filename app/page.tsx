@@ -79,7 +79,7 @@ export default function HomePage() {
         <main className="min-h-screen bg-gray-50 dark:bg-gray-950">
           <div className="max-w-sm mx-auto px-4 pt-safe pb-32">
             {/* Header */}
-            <header className="pt-6 pb-6">
+            <header className="pt-6 pb-4">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                 Менеджер паролей
               </h1>
@@ -96,7 +96,7 @@ export default function HomePage() {
             )}
 
             {/* Password Form */}
-            <section className="mb-6" aria-label="Добавить пароль">
+            <section className="mb-3" aria-label="Добавить пароль">
               <PasswordForm
                   selectedEntry={selectedEntry}
                   passwordValue={formPassword}

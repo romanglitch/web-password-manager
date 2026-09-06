@@ -83,7 +83,7 @@ export default function ShareModal({ linkId, linkUrl, expiresAt, onCancel, onExp
 
 	return (
 		<div
-			className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm"
+			className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm share-modal"
 			role="dialog"
 			aria-modal="true"
 			aria-labelledby="share-modal-title"

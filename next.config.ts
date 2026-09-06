@@ -1,11 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-	allowedDevOrigins: ['*'],
+	allowedDevOrigins: ["192.168.51.2"],
 	reactStrictMode: true,
-	// Ensure Node.js runtime is used for API routes (for in-memory store)
 	experimental: {},
 	output: "standalone",
+	devIndicators: false
 };
 
 export default nextConfig;
