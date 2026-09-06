@@ -24,22 +24,16 @@ export default function TempLinkPage({ params }: PageProps) {
 	const remaining = useCountdown(expiresAt);
 
 	const fetchLink = useCallback(async () => {
-		if (!id || id.length > 20) {
+		// Проверяем формат до запроса — буква + 2 цифры
+		if (!id || !/^[a-z]\d{2}$/.test(id)) {
 			setState("not_found");
 			return;
 		}
 
 		try {
 			const res = await fetch(`/api/links/${encodeURIComponent(id)}`);
-			if (res.status === 404) {
-				setState("not_found");
-				return;
-			}
-			if (!res.ok) {
-				setState("error");
-				setErrorMessage("Ошибка загрузки ссылки");
-				return;
-			}
+			if (res.status === 404) { setState("not_found"); return; }
+			if (!res.ok) { setState("error"); setErrorMessage("Ошибка загрузки ссылки"); return; }
 
 			const data = await res.json() as GetLinkResponse;
 			passwordRef.current = data.password;
@@ -52,23 +46,10 @@ export default function TempLinkPage({ params }: PageProps) {
 		}
 	}, [id]);
 
-	const initializedRef = useRef(false);
+	useEffect(() => { fetchLink(); }, [fetchLink]);
 
 	useEffect(() => {
-		fetchLink();
-	}, [fetchLink]);
-
-	// When timer hits zero, clear password from state and DOM
-	useEffect(() => {
-		if (state !== "valid") return;
-		if (remaining < 0) return;
-
-		if (!initializedRef.current) {
-			initializedRef.current = true;
-			return;
-		}
-
-		if (remaining === 0) {
+		if (state === "valid" && remaining === 0) {
 			setPassword("");
 			passwordRef.current = "";
 			setShowPassword(false);
@@ -98,11 +79,9 @@ export default function TempLinkPage({ params }: PageProps) {
 	};
 
 	const urgentColor =
-		remaining <= 15
-			? "text-red-600 dark:text-red-400"
-			: remaining <= 30
-				? "text-orange-500 dark:text-orange-400"
-				: "text-green-600 dark:text-green-400";
+		remaining <= 15 ? "text-red-600 dark:text-red-400" :
+			remaining <= 30 ? "text-orange-500 dark:text-orange-400" :
+				"text-green-600 dark:text-green-400";
 
 	if (state === "loading") {
 		return (
@@ -124,16 +103,9 @@ export default function TempLinkPage({ params }: PageProps) {
 						<line x1="11" y1="16" x2="11.01" y2="16" />
 					</svg>
 				</div>
-				<h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-					Ссылка не найдена
-				</h1>
-				<p className="text-gray-500 dark:text-gray-400 text-sm">
-					Ссылка не существует или уже истекла.
-				</p>
-				<a
-					href="/"
-					className="mt-6 px-6 py-3 rounded-2xl bg-blue-600 text-white font-semibold text-sm hover:bg-blue-700 transition-colors"
-				>
+				<h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Ссылка не найдена</h1>
+				<p className="text-gray-500 dark:text-gray-400 text-sm">Ссылка не существует или уже истекла.</p>
+				<a href="/" className="mt-6 px-6 py-3 rounded-2xl bg-blue-600 text-white font-semibold text-sm hover:bg-blue-700 transition-colors">
 					На главную
 				</a>
 			</div>
@@ -151,10 +123,7 @@ export default function TempLinkPage({ params }: PageProps) {
 				</div>
 				<h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Ссылка истекла</h1>
 				<p className="text-gray-500 dark:text-gray-400 text-sm">Пароль был автоматически удалён.</p>
-				<a
-					href="/"
-					className="mt-6 px-6 py-3 rounded-2xl bg-blue-600 text-white font-semibold text-sm hover:bg-blue-700 transition-colors"
-				>
+				<a href="/" className="mt-6 px-6 py-3 rounded-2xl bg-blue-600 text-white font-semibold text-sm hover:bg-blue-700 transition-colors">
 					На главную
 				</a>
 			</div>
@@ -166,10 +135,8 @@ export default function TempLinkPage({ params }: PageProps) {
 			<div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-950 p-6 text-center">
 				<h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Ошибка</h1>
 				<p className="text-gray-500 dark:text-gray-400 text-sm">{errorMessage}</p>
-				<button
-					onClick={fetchLink}
-					className="mt-6 px-6 py-3 rounded-2xl bg-blue-600 text-white font-semibold text-sm hover:bg-blue-700 transition-colors"
-				>
+				<button onClick={fetchLink}
+						className="mt-6 px-6 py-3 rounded-2xl bg-blue-600 text-white font-semibold text-sm hover:bg-blue-700 transition-colors">
 					Повторить
 				</button>
 			</div>
@@ -183,9 +150,7 @@ export default function TempLinkPage({ params }: PageProps) {
 					<p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
 						Временный пароль
 					</p>
-					<h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-						Получите пароль
-					</h1>
+					<h1 className="text-2xl font-bold text-gray-900 dark:text-white">Получите пароль</h1>
 				</header>
 
 				{/* Timer */}
@@ -224,16 +189,15 @@ export default function TempLinkPage({ params }: PageProps) {
 				<div className="mb-4 p-4 rounded-2xl bg-white dark:bg-gray-800 shadow-sm space-y-3">
 					<p className="text-xs font-medium text-gray-500 dark:text-gray-400">Пароль</p>
 					<div className="flex items-center gap-2">
-						<p
-							className="flex-1 font-mono text-base text-gray-900 dark:text-white break-all"
-							aria-label={showPassword ? `Пароль: ${password}` : "Пароль скрыт"}
-						>
+						<p className="flex-1 font-mono text-base text-gray-900 dark:text-white break-all"
+						   aria-label={showPassword ? `Пароль: ${password}` : "Пароль скрыт"}>
 							{showPassword ? password : "••••••••••••"}
 						</p>
 						<button
 							onClick={() => setShowPassword((v) => !v)}
 							className="p-2.5 rounded-xl text-gray-400 hover:text-gray-600 dark:hover:text-gray-200
-                         hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+                         hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors
+                         min-h-[44px] min-w-[44px] flex items-center justify-center"
 							aria-label={showPassword ? "Скрыть пароль" : "Показать пароль"}
 						>
 							{showPassword ? <EyeOffIcon /> : <EyeIcon />}
@@ -241,25 +205,20 @@ export default function TempLinkPage({ params }: PageProps) {
 					</div>
 				</div>
 
-				{/* Copy button */}
+				{/* Copy */}
 				<button
 					onClick={handleCopy}
-					className={`w-full py-4 rounded-2xl font-semibold text-base transition-all active:scale-95
-            ${copied
-						? "bg-green-500 text-white"
-						: "bg-blue-600 hover:bg-blue-700 text-white"
+					className={`w-full py-4 rounded-2xl font-semibold text-base transition-all active:scale-95 ${
+						copied ? "bg-green-500 text-white" : "bg-blue-600 hover:bg-blue-700 text-white"
 					}`}
 					aria-label="Скопировать пароль"
-					aria-live="polite"
 				>
 					{copied ? "✓ Пароль скопирован!" : "Скопировать пароль"}
 				</button>
 
 				<div className="mt-auto pt-6 pb-4 text-center">
-					<a
-						href="/"
-						className="text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-					>
+					<a href="/"
+					   className="text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
 						Перейти в менеджер паролей
 					</a>
 				</div>
@@ -270,15 +229,18 @@ export default function TempLinkPage({ params }: PageProps) {
 
 function EyeIcon() {
 	return (
-		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-			<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" />
+		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+			 strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+			<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+			<circle cx="12" cy="12" r="3" />
 		</svg>
 	);
 }
 
 function EyeOffIcon() {
 	return (
-		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+			 strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
 			<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
 			<path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
 			<line x1="1" y1="1" x2="23" y2="23" />
