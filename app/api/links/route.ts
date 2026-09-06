@@ -24,7 +24,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 		const { id, expiresAt } = createTemporaryLink(password);
 
 		const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? `${request.nextUrl.protocol}//${request.nextUrl.host}`;
-		const url = `${baseUrl}/q/${id}`;
+		const url = `${baseUrl}/${id}`;
 
 		return NextResponse.json({ id, expiresAt, url }, { status: 201 });
 	} catch (err) {

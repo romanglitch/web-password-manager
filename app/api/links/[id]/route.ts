@@ -9,7 +9,8 @@ export async function GET(
 ): Promise<NextResponse> {
 	const { id } = await context.params;
 
-	if (!id || typeof id !== "string" || id.length > 20) {
+	// Ровно 3 символа: буква + 2 цифры
+	if (!id || typeof id !== "string" || !/^[a-z]\d{2}$/.test(id)) {
 		return NextResponse.json({ error: "Неверный идентификатор" }, { status: 400 });
 	}
 
@@ -32,7 +33,7 @@ export async function DELETE(
 ): Promise<NextResponse> {
 	const { id } = await context.params;
 
-	if (!id || typeof id !== "string" || id.length > 20) {
+	if (!id || typeof id !== "string" || !/^[a-z]\d{2}$/.test(id)) {
 		return NextResponse.json({ error: "Неверный идентификатор" }, { status: 400 });
 	}
 
