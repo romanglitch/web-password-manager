@@ -55,6 +55,7 @@ export default function PasswordForm({
 	const handleSend = async () => {
 		if (!passwordValue.trim() || sending) return;
 		await onSend(passwordValue);
+		onClearSelection()
 	};
 
 	const handlePasswordChange = (value: string) => {
@@ -76,17 +77,20 @@ export default function PasswordForm({
 	return (
 		<div className="space-y-3">
 			{selectedEntry && (
-				<div className="flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
+				<div className="selected-entry flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
 					<div className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0" aria-hidden="true" />
 					<p className="text-sm text-blue-700 dark:text-blue-300 flex-1 min-w-0 truncate">
 						Выбран: <strong>{selectedEntry.name}</strong>
 					</p>
 					<button
+						id="clear-selection"
 						onClick={onClearSelection}
 						className="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-200 text-xs underline flex-shrink-0"
 						aria-label="Снять выбор"
 					>
-						Снять
+						<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="16" height="16" viewBox="0 0 24 24">
+							<path d="M 4.9902344 3.9902344 A 1.0001 1.0001 0 0 0 4.2929688 5.7070312 L 10.585938 12 L 4.2929688 18.292969 A 1.0001 1.0001 0 1 0 5.7070312 19.707031 L 12 13.414062 L 18.292969 19.707031 A 1.0001 1.0001 0 1 0 19.707031 18.292969 L 13.414062 12 L 19.707031 5.7070312 A 1.0001 1.0001 0 0 0 18.980469 3.9902344 A 1.0001 1.0001 0 0 0 18.292969 4.2929688 L 12 10.585938 L 5.7070312 4.2929688 A 1.0001 1.0001 0 0 0 4.9902344 3.9902344 z"></path>
+						</svg>
 					</button>
 				</div>
 			)}
@@ -126,7 +130,7 @@ export default function PasswordForm({
 
 			{/* Name field — appears after clicking "Добавить" */}
 			{showNameField && (
-				<div className="space-y-2 animate-fade-in">
+				<div className="space-y-2 animate-fade-in add-form">
 					<div>
 						<label htmlFor={nameId} className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">
 							Название <span className="text-red-500" aria-hidden="true">*</span>
@@ -183,7 +187,7 @@ export default function PasswordForm({
 					{canAdd && (
 						<button
 							onClick={handleAddClick}
-							className="flex-1 py-3.5 rounded-2xl bg-gray-900 dark:bg-white text-white dark:text-gray-900
+							className="action-btn flex-1 py-3.5 rounded-2xl bg-gray-900 dark:bg-white text-white dark:text-gray-900
                          text-sm font-semibold hover:bg-gray-700 dark:hover:bg-gray-100 active:scale-95 transition-all"
 							aria-label="Добавить пароль"
 						>
@@ -194,7 +198,7 @@ export default function PasswordForm({
 						<button
 							onClick={handleSend}
 							disabled={!canSend}
-							className="flex-1 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white
+							className="action-btn flex-1 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white
                          text-sm font-semibold active:scale-95 transition-all
                          disabled:opacity-50 disabled:cursor-not-allowed"
 							aria-label="Отправить пароль по временной ссылке"

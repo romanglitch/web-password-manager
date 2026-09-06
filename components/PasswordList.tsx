@@ -48,7 +48,7 @@ export default function PasswordList({
 
 	return (
 		<section aria-label="Сохранённые пароли">
-			<div className="flex items-center justify-between mb-4">
+			<div className="flex items-center justify-between mb-4" role="list-header">
 				<h2 className="text-base font-semibold text-gray-900 dark:text-white">
 					Сохранённые пароли
 					{passwords.length > 0 && (
@@ -110,7 +110,10 @@ export default function PasswordList({
 			{deleteTarget && (
 				<DeleteConfirm
 					name={deleteTarget.name}
-					onConfirm={handleDeleteConfirm}
+					onConfirm={() => {
+						handleDeleteConfirm()
+						document.getElementById('clear-selection')?.click()
+					}}
 					onCancel={() => { setDeleteTarget(null); setDeleteError(null); }}
 				/>
 			)}
