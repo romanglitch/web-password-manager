@@ -1,0 +1,32 @@
+services:
+  password-manager:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Передаётся в build-time для NEXT_PUBLIC_ переменных
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+    image: password-manager:latest
+    container_name: password-manager
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"   # слушаем только на localhost — Nginx Proxy Manager проксирует
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
+      - LINK_SIGNING_SECRET=${LINK_SIGNING_SECRET}
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  default:
+    name: password-manager-net
