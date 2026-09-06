@@ -107,7 +107,7 @@ export default function PasswordForm({
                        bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500
                        text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
                        transition-all"
-						autoComplete="current-password"
+						autoComplete="off"
 						aria-label="Пароль"
 						aria-describedby={addError ? `${passwordId}-error` : undefined}
 					/>
